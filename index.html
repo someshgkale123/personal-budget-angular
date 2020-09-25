@@ -1,7 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+    
+<!-- Semantic change: <nav> | <aside> | <mark> | <figure> | <footer> -->
+<!-- SEO change: <open graph tag> | <twitter card tag> | <h4> | <canonical> -->
+<!-- A11y change: <abbr> | <good link text> | <button> | <alt> -->
+
 <head>
     <meta charset="UTF-8">
+    <!-- This is a SEO HTML Change (Open graph tag) -->
+    <meta name="og:title" property="og:title" content="Personal Budget">
+    
+    <!-- This is a SEO HTML Change (twitter card tag) -->
+    <meta name="twitter:card" content="This app helps track expenses">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personal Budget</title>
     <link rel="stylesheet" href="reset.css">
@@ -19,8 +29,12 @@
     </div>
     
     <div class="hero">
+        
         <h1>Personal Budget</h1>
         <h2>A personal-budget management app</h2>
+        <!-- This is an SEO HTML Change (canonical)-->
+        <link rel="canonical" href="https://www.mymoneycoach.ca/budgeting/what-is-a-budget-planning-forecasting"></link>
+
     
     
 
@@ -30,22 +44,23 @@
         <!-- This is an A11y Change (abbr)-->
         <a href="https://html.com/"><abbr title="Hypertext markup language">HTML</abbr></a> |
         <a href="https://css-tricks.com/"><abbr title="Cascading style sheets">CSS</abbr></a> |
-        <a href="https://www.python.org/">Python</a> 
+        <a href="https://www.javascript.com/">Javascript</a> 
     </nav>
 
    
       <!-- This is a Semantic HTML Change (aside) -->
       <aside>
+        <!-- This is an SEO Change (header 4)-->
+        <h4>Today's budget management tip:</h4>
+        <h2># Start with the most important categories first.</h2>
         <!-- This is an A11y Change (good link text)-->
-        <h4>This webpage shows personal budget information, which helps in managing expenses <a href="https://www.investopedia.com/terms/e/expense.asp">what is expense ?</a></h4>
-        <!-- This is a Semantic HTML Change (figure) -->
-        <figure class="center">
-            <!-- This is an A11y Change (alt)-->
-            <img src="pm.jpg" alt="Personal budget" style="width:30%">
-          </figure>
+        <a href="https://www.mymoneycoach.ca/budgeting/what-is-a-budget-planning-forecasting">what is budget management ?</a>
+        
+        
+        
         <div class="center">
         <!-- This is an A11y Change (button)-->
-        <button>Know more</button>
+        <button>Get more tips</button>
         </div>
         
     </aside>
@@ -89,7 +104,11 @@
                     This app is free!!! And you are the only one holding your data!
                 </p>
             </div>
-    
+            <!-- This is a Semantic HTML Change (figure) -->
+            <figure class="center">
+                <!-- This is an A11y Change (alt)-->
+                <img src="Pbm.png" alt="Personal budget" style="width:80%">
+              </figure>
             <div class="text-box">
                 <!-- This is a Semantic HTML Change (mark) -->
                 <h1><mark>Stay on track</mark></h1>
@@ -132,7 +151,10 @@
 
     <div class="bottom">
         <div class="center">
+            <footer>
+            <!-- This is a Semantic HTML Change (footer) -->
             All rights reserved &copy; Fabio Nolasco
+            </footer>
         </div>
     </div>
 
