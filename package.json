@@ -1,0 +1,23 @@
+{
+  "name": "personal-budget",
+  "version": "1.0.0",
+  "description": "The path to NGInx main folder:\r /usr/share/nginx/html",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/someshgkale123/personal-budget.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/someshgkale123/personal-budget/issues"
+  },
+  "homepage": "https://github.com/someshgkale123/personal-budget#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
