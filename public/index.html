@@ -66,9 +66,15 @@
     </aside>
     
     <div class="container center">
-
+        <div class="text-box">
+            <!-- This is a Semantic HTML Change (mark) -->
+            <h1><mark>Chart</mark></h1>
+            <p>
+                <canvas id="myChart" width="400" height="400"></canvas>
+            </p>
+        </div>
         <div class="page-area">
-
+            
             <div class="text-box">
                 <!-- This is a Semantic HTML Change (mark) -->
                 <h1><mark>Stay on track</mark></h1>
@@ -137,13 +143,7 @@
                 </p>
             </div>
     
-            <div class="text-box">
-                <!-- This is a Semantic HTML Change (mark) -->
-                <h1><mark>Chart</mark></h1>
-                <p>
-                    <canvas id="myChart" width="400" height="400"></canvas>
-                </p>
-            </div>
+            
 
         </div>
 
@@ -159,24 +159,27 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js" integrity="sha512-quHCp3WbBNkwLfYUMd+KwBAgpVukJu5MncuQaWXgCrfgcxCJAq/fo+oqrRKOj+UKEmyMCG3tb8RB63W+EmrOBg==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" integrity="sha512-s+xg36jbIujB2S2VKfpGmlC3T5V2TF3lY48DX7u2r9XzGzgPsa6wTpOQA7J9iffvdeBN0q9tKzRxVxw1JviZPg==" crossorigin="anonymous"></script>
+    
     <script>
+
         var dataSource ={
             datasets: [
                 {
-                    data: [30,350,90],
+                    data: [],
                     backgroundColor: [
                         '#ffcd56',
                         '#ff6384',
                         '#36a2eb',
                         '#fd6b19',
+                        'red',
+                        'purple',
+                        'green',
+                        'violet',
+                        'brown'
                     ],
                 }
             ],
-            labels: [
-                'Eat Out',
-                'Rent',
-                'Groceries'
-            ]
+            labels: []
         };
 
         function createChart() {
@@ -189,7 +192,8 @@
 
         function getBudget(){
             axios.get('/budget')
-            .then(function(res){
+            .then(function(res)
+            {
                 console.log(res);
                 for(var i=0; i<res.data.myBudget.length;i++){
                     dataSource.datasets[0].data[i]=res.data.myBudget[i].budget;
