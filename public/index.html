@@ -9,6 +9,9 @@
     <meta charset="UTF-8">
     <!-- This is a SEO HTML Change (Open graph tag) -->
     <meta name="og:title" property="og:title" content="Personal Budget">
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js" integrity="sha512-quHCp3WbBNkwLfYUMd+KwBAgpVukJu5MncuQaWXgCrfgcxCJAq/fo+oqrRKOj+UKEmyMCG3tb8RB63W+EmrOBg==" crossorigin="anonymous"></script>
     
     <!-- This is a SEO HTML Change (twitter card tag) -->
     <meta name="twitter:card" content="This app helps track expenses">
@@ -17,6 +20,7 @@
     <link rel="stylesheet" href="reset.css">
     <link rel="stylesheet" href="main.css">
 </head>
+
 <body>
 
     <div class="menu">
@@ -35,9 +39,6 @@
         <!-- This is an SEO HTML Change (canonical)-->
         <link rel="canonical" href="https://www.mymoneycoach.ca/budgeting/what-is-a-budget-planning-forecasting"></link>
 
-    
-    
-
     </div>
     <!-- This is a Semantic HTML Change (nav) -->
     <nav>
@@ -49,7 +50,9 @@
 
    
       <!-- This is a Semantic HTML Change (aside) -->
-      <aside>
+      
+    
+    <aside>
         <!-- This is an SEO Change (header 4)-->
         <h4>Today's budget management tip:</h4>
         <h2># Start with the most important categories first.</h2>
@@ -64,18 +67,130 @@
         </div>
         
     </aside>
+    <script>
+            
+        var data={};
+        var dataColor=[]
+
+
+        function createD3()
+        {
+            var width = 460
+            height = 460
+            margin = 80
+
+        
+        var radius = Math.min(width, height) / 2 - margin
+
+        var svg = d3.select("#d3chart")
+        .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+        .append("g")
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+       
+
+        
+        var color = d3.scaleOrdinal()
+        .domain([dataColor])
+        .range(d3.schemeDark2);
+
+        
+        var pie = d3.pie()
+        .sort(null) 
+        .value(function(d) {return d.value; })
+        var data_ready = pie(d3.entries(data))
+
+        
+        var arc = d3.arc()
+        .innerRadius(radius * 0.3)         
+        .outerRadius(radius * 0.8)
+
+        
+        var outerArc = d3.arc()
+        .innerRadius(radius * 0.9)
+        .outerRadius(radius * 0.8)
+
+        
+        svg
+        .selectAll('allSlices')
+        .data(data_ready)
+        .enter()
+        .append('path')
+        .attr('d', arc)
+        .attr('fill', function(d){ return(color(d.data.key)) })
+        .attr("stroke", "white")
+        .style("stroke-width", "2px")
+        .style("opacity", 1)
+
+        
+        svg
+        .selectAll('allPolyLines')
+        .data(data_ready)
+        .enter()
+        .append('polyline')
+            .attr("stroke", "black")
+            .style("fill", "none")
+            .attr("stroke-width", 1)
+            .attr('points', function(d) {
+            var posA = arc.centroid(d) 
+            var posB = outerArc.centroid(d) 
+            var posC = outerArc.centroid(d); 
+            var midAngle = d.startAngle + (d.endAngle - d.startAngle) / 2 
+            posC[0] = radius * 0.97 * (midAngle < Math.PI ? 1 : -1); 
+            return [posA, posB, posC]
+            })
+
+        
+        svg
+        .selectAll('allLabels')
+        .data(data_ready)
+        .enter()
+        .append('text')
+            .text( function(d) { console.log(d.data.key) ; return d.data.key } )
+            .attr('transform', function(d) {
+                var pos = outerArc.centroid(d);
+                var midAngle = d.startAngle + (d.endAngle - d.startAngle) / 2
+                pos[0] = radius * 1.1 * (midAngle < Math.PI ? 1 : -1);
+                return 'translate(' + pos + ')';
+            })
+            .style('text-anchor', function(d) {
+                var midAngle = d.startAngle + (d.endAngle - d.startAngle) / 2
+                return (midAngle < Math.PI ? 'start' : 'end')
+            })
     
+        }
+
+        function getData(){
+            axios.get('/budget')
+            .then(function(res)
+            {
+                console.log(res);
+                for(var i=0; i<res.data.myBudget.length;i++){
+                    data[res.data.myBudget[i].title]=res.data.myBudget[i].budget;
+                    dataColor[i]=res.data.myBudget[i].title
+                }
+                createD3();
+            })
+        }
+        getData();
+
+    </script>    
     <div class="container center">
-        <div class="text-box">
-            <!-- This is a Semantic HTML Change (mark) -->
-            <h1><mark>Chart</mark></h1>
-            <p>
-                <canvas id="myChart" width="400" height="400"></canvas>
-            </p>
-        </div>
+        
         <div class="page-area">
             
-            <div class="text-box">
+            
+
+                <div class="text-box">
+                    <p>
+                        <canvas id="myChart" width="400" height="400"></canvas>
+                    </p>
+                </div>  
+                <div class="text-box">
+                    <div id="d3chart"></div>
+                </div>
                 <!-- This is a Semantic HTML Change (mark) -->
                 <h1><mark>Stay on track</mark></h1>
                 <p>
@@ -83,7 +198,7 @@
                     you would get surprised! Proper budget management depends on real data... and this
                     app will help you with that!
                 </p>
-            </div>
+            
     
             <div class="text-box">
                 <!-- This is a Semantic HTML Change (mark) -->
@@ -103,17 +218,11 @@
                 </p>
             </div>
     
-            <div class="text-box">
-                <!-- This is a Semantic HTML Change (mark) -->
-                <h1><mark>Free</mark></h1>
-                <p>
-                    This app is free!!! And you are the only one holding your data!
-                </p>
-            </div>
+            
             <!-- This is a Semantic HTML Change (figure) -->
             <figure class="center">
                 <!-- This is an A11y Change (alt)-->
-                <img src="Pbm.png" alt="Personal budget" style="width:80%">
+                <img src="Pbm.png" alt="Personal budget" style="width:50%">
               </figure>
             <div class="text-box">
                 <!-- This is a Semantic HTML Change (mark) -->
@@ -142,13 +251,9 @@
                     because they know it is all good and accounted for.
                 </p>
             </div>
-    
-            
-
         </div>
 
     </div>
-
     <div class="bottom">
         <div class="center">
             <footer>
@@ -157,7 +262,6 @@
             </footer>
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js" integrity="sha512-quHCp3WbBNkwLfYUMd+KwBAgpVukJu5MncuQaWXgCrfgcxCJAq/fo+oqrRKOj+UKEmyMCG3tb8RB63W+EmrOBg==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" integrity="sha512-s+xg36jbIujB2S2VKfpGmlC3T5V2TF3lY48DX7u2r9XzGzgPsa6wTpOQA7J9iffvdeBN0q9tKzRxVxw1JviZPg==" crossorigin="anonymous"></script>
     
     <script>
@@ -203,7 +307,9 @@
             })
         }
         getBudget();
+        
 
+    
     </script>
 </body>
 </html>

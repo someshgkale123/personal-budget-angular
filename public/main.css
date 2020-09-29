@@ -90,7 +90,7 @@ div.hero h2 {
 }
 
 .page-area {
-    max-width: 768px;
+    max-width: 1000px;
     display: inline-block;
 }
 
@@ -104,12 +104,14 @@ div.hero h2 {
     text-align: center;
 }
 
+
+
 .container div.text-box {
     display: inline-block;
     width: 100%;
-    max-width: 340px;
+    max-width: 350px;
     text-align: justify;
-    margin: 20px;
+    margin: 70px;
 }
 
 @media screen and (min-width: 768px) {
