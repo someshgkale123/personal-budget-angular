@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<!-- Semantic change: <nav> | <aside> | <mark> | <figure> | <footer> -->
+<!-- SEO change: <open graph tag> | <twitter card tag> | <h4> | <canonical> -->
+<!-- A11y change: <abbr> | <good link text> | <button> | <alt> -->
+
+<head>
+    <meta charset="UTF-8">
+    <!-- This is a SEO HTML Change (Open graph tag) -->
+    <meta name="og:title" property="og:title" content="Personal Budget">
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js" integrity="sha512-quHCp3WbBNkwLfYUMd+KwBAgpVukJu5MncuQaWXgCrfgcxCJAq/fo+oqrRKOj+UKEmyMCG3tb8RB63W+EmrOBg==" crossorigin="anonymous"></script>
+    
+    <!-- This is a SEO HTML Change (twitter card tag) -->
+    <meta name="twitter:card" content="This app helps track expenses">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Budget</title>
+    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+
+    <div class="menu">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/login.html">Login</a></li>
+            <li><a href="https://google.com">Google</a></li>
+        </ul>
+    </div>
+    
+    <div class="hero">
+        
+        <h1>Personal Budget</h1>
+        <h2>A personal-budget management app</h2>
+        <!-- This is an SEO HTML Change (canonical)-->
+        <link rel="canonical" href="https://www.mymoneycoach.ca/budgeting/what-is-a-budget-planning-forecasting"></link>
+
+    </div>
+    <!-- This is a Semantic HTML Change (nav) -->
+    <nav>
+        <!-- This is an A11y Change (abbr)-->
+        <a href="https://html.com/"><abbr title="Hypertext markup language">HTML</abbr></a> |
+        <a href="https://css-tricks.com/"><abbr title="Cascading style sheets">CSS</abbr></a> |
+        <a href="https://www.javascript.com/">Javascript</a> 
+    </nav>
+
+   
+      <!-- This is a Semantic HTML Change (aside) -->
+      
+    
+    <aside>
+        <!-- This is an SEO Change (header 4)-->
+        <h4>Today's budget management tip:</h4>
+        <h2># Start with the most important categories first.</h2>
+        <!-- This is an A11y Change (good link text)-->
+        <a href="https://www.mymoneycoach.ca/budgeting/what-is-a-budget-planning-forecasting">what is budget management ?</a>
+        
+        
+        
+        <div class="center">
+        <!-- This is an A11y Change (button)-->
+        <button>Get more tips</button>
+        </div>
+        
+    </aside>
+    <script>
+            
+        var data={};
+        var dataColor=[]
+
+
+        function createD3()
+        {
+            var width = 460
+            height = 460
+            margin = 80
+
+        
+        var radius = Math.min(width, height) / 2 - margin
+
+        var svg = d3.select("#d3chart")
+        .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+        .append("g")
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+       
+
+        
+        var color = d3.scaleOrdinal()
+        .domain([dataColor])
+        .range(d3.schemeDark2);
+
+        
+        var pie = d3.pie()
+        .sort(null) 
+        .value(function(d) {return d.value; })
+        var data_ready = pie(d3.entries(data))
+
+        
+        var arc = d3.arc()
+        .innerRadius(radius * 0.3)         
+        .outerRadius(radius * 0.8)
+
+        
+        var outerArc = d3.arc()
+        .innerRadius(radius * 0.9)
+        .outerRadius(radius * 0.8)
+
+        
+        svg
+        .selectAll('allSlices')
+        .data(data_ready)
+        .enter()
+        .append('path')
+        .attr('d', arc)
+        .attr('fill', function(d){ return(color(d.data.key)) })
+        .attr("stroke", "white")
+        .style("stroke-width", "2px")
+        .style("opacity", 1)
+
+        
+        svg
+        .selectAll('allPolyLines')
+        .data(data_ready)
+        .enter()
+        .append('polyline')
+            .attr("stroke", "black")
+            .style("fill", "none")
+            .attr("stroke-width", 1)
+            .attr('points', function(d) {
+            var posA = arc.centroid(d) 
+            var posB = outerArc.centroid(d) 
+            var posC = outerArc.centroid(d); 
+            var midAngle = d.startAngle + (d.endAngle - d.startAngle) / 2 
+            posC[0] = radius * 0.97 * (midAngle < Math.PI ? 1 : -1); 
+            return [posA, posB, posC]
+            })
+
+        
+        svg
+        .selectAll('allLabels')
+        .data(data_ready)
+        .enter()
+        .append('text')
+            .text( function(d) { console.log(d.data.key) ; return d.data.key } )
+            .attr('transform', function(d) {
+                var pos = outerArc.centroid(d);
+                var midAngle = d.startAngle + (d.endAngle - d.startAngle) / 2
+                pos[0] = radius * 1.1 * (midAngle < Math.PI ? 1 : -1);
+                return 'translate(' + pos + ')';
+            })
+            .style('text-anchor', function(d) {
+                var midAngle = d.startAngle + (d.endAngle - d.startAngle) / 2
+                return (midAngle < Math.PI ? 'start' : 'end')
+            })
+    
+        }
+
+        function getData(){
+            axios.get('http://localhost:3000/budget')
+            .then(function(res)
+            {
+                console.log(res);
+                for(var i=0; i<res.data.myBudget.length;i++){
+                    data[res.data.myBudget[i].title]=res.data.myBudget[i].budget;
+                    dataColor[i]=res.data.myBudget[i].title
+                }
+                createD3();
+            })
+        }
+        getData();
+
+    </script>    
+    <div class="container center">
+        
+        <div class="page-area">
+            
+            
+
+                <div class="text-box">
+                    <p>
+                        <canvas id="myChart" width="400" height="400"></canvas>
+                    </p>
+                </div>  
+                <div class="text-box">
+                    <div id="d3chart"></div>
+                </div>
+                <!-- This is a Semantic HTML Change (mark) -->
+                <h1><mark>Stay on track</mark></h1>
+                <p>
+                    Do you know where you are spending your money? If you really stop to track it down,
+                    you would get surprised! Proper budget management depends on real data... and this
+                    app will help you with that!
+                </p>
+            
+    
+            <div class="text-box">
+                <!-- This is a Semantic HTML Change (mark) -->
+                <h1><mark>Alerts</mark></h1>
+                <p>
+                    What if your clothing budget ended? You will get an alert. The goal is to never go over the budget.
+                </p>
+            </div>
+    
+            <div class="text-box">
+                <!-- This is a Semantic HTML Change (mark) -->
+                <h1><mark>Results</mark></h1>
+                <p>
+                    People who stick to a financial plan, budgeting every expense, get out of debt faster!
+                    Also, they to live happier lives... since they expend without guilt or fear... 
+                    because they know it is all good and accounted for.
+                </p>
+            </div>
+    
+            
+            <!-- This is a Semantic HTML Change (figure) -->
+            <figure class="center">
+                <!-- This is an A11y Change (alt)-->
+                <img src="Pbm.png" alt="Personal budget" style="width:50%">
+              </figure>
+            <div class="text-box">
+                <!-- This is a Semantic HTML Change (mark) -->
+                <h1><mark>Stay on track</mark></h1>
+                <p>
+                    Do you know where you are spending your money? If you really stop to track it down,
+                    you would get surprised! Proper budget management depends on real data... and this
+                    app will help you with that!
+                </p>
+            </div>
+    
+            <div class="text-box">
+                <!-- This is a Semantic HTML Change (mark) -->
+                <h1><mark>Alerts</mark></h1>
+                <p>
+                    What if your clothing budget ended? You will get an alert. The goal is to never go over the budget.
+                </p>
+            </div>
+    
+            <div class="text-box">
+                <!-- This is a Semantic HTML Change (mark) -->
+                <h1><mark>Results</mark></h1>
+                <p>
+                    People who stick to a financial plan, budgeting every expense, get out of debt faster!
+                    Also, they to live happier lives... since they expend without guilt or fear... 
+                    because they know it is all good and accounted for.
+                </p>
+            </div>
+        </div>
+
+    </div>
+    <div class="bottom">
+        <div class="center">
+            <footer>
+            <!-- This is a Semantic HTML Change (footer) -->
+            All rights reserved &copy; Fabio Nolasco
+            </footer>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" integrity="sha512-s+xg36jbIujB2S2VKfpGmlC3T5V2TF3lY48DX7u2r9XzGzgPsa6wTpOQA7J9iffvdeBN0q9tKzRxVxw1JviZPg==" crossorigin="anonymous"></script>
+    
+    <script>
+
+        var dataSource ={
+            datasets: [
+                {
+                    data: [],
+                    backgroundColor: [
+                        '#ffcd56',
+                        '#ff6384',
+                        '#36a2eb',
+                        '#fd6b19',
+                        'red',
+                        'purple',
+                        'green',
+                        'violet',
+                        'brown'
+                    ],
+                }
+            ],
+            labels: []
+        };
+
+        function createChart() {
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myPieChart = new Chart(ctx,{
+                type:'pie',
+                data:dataSource
+            });
+        }
+
+        function getBudget(){
+            axios.get('http://localhost:3000/budget')
+            .then(function(res)
+            {
+                console.log(res);
+                for(var i=0; i<res.data.myBudget.length;i++){
+                    dataSource.datasets[0].data[i]=res.data.myBudget[i].budget;
+                    dataSource.labels[i]=res.data.myBudget[i].title;
+                }
+                createChart();
+            })
+        }
+        getBudget();
+        
+
+    
+    </script>
+</body>
+</html>
